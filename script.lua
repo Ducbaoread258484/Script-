@@ -1,30 +1,24 @@
--- Arise Crossover - Teleport Script with Menu
--- Vị trí 3D gốc: -16.58, 57.96, -88.41
--- Tọa độ màn hình giả định: 950, 540 (bạn cần chỉnh theo thực tế)
-
-local teleportPoints = {
-    ["Boss1"] = {x = 950, y = 540},
-    -- Thêm các tọa độ khác vào đây
+-- Menu teleport Arise Crossover
+local coords = {
+    ["Điểm Tele"] = {-16.5845299, 57.9649925, -88.4107285},
+    ["Boss 1"] = {x1, y1, z1},
+    ["Boss 2"] = {x2, y2, z2}
 }
 
-function teleport(name)
-    local pos = teleportPoints[name]
-    if pos then
-        touchDown(0, pos.x, pos.y)
-        usleep(120000)
-        touchUp(0, pos.x, pos.y)
-        toast("Teleported to " .. name)
+function teleportTo(x, y, z)
+    local plr = game.Players.LocalPlayer
+    if plr and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+        plr.Character.HumanoidRootPart.CFrame = CFrame.new(x, y, z)
     end
 end
 
--- GUI menu
-ui = {}
-for name, _ in pairs(teleportPoints) do
-    table.insert(ui, {name, "button", name})
-end
+-- Giao diện đơn giản (nếu bạn dùng executor có hỗ trợ UI)
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/uilib"))()
+local win = library:CreateWindow("Teleport")
+local tab = win:CreateTab("Chọn điểm")
 
-function callback(name)
-    teleport(name)
+for name, pos in pairs(coords) do
+    tab:CreateButton(name, function()
+        teleportTo(unpack(pos))
+    end)
 end
-
-uiShow("Teleport Menu", ui)
